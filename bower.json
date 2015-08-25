@@ -1,0 +1,11 @@
+{
+  "name": "share-ace",
+  "version": "0.1.0",
+  "main": "share-ace.js",
+  "ignore": [
+    "node_modules"
+  ],
+  "dependencies": {
+    "ace-builds": "~1.2.0"
+  }
+}

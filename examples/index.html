@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="bower_components/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/node_modules/browserchannel/dist/bcsocket.js"></script>
+  <script src="/node_modules/share/dist/share.js"></script>
+  <script src="../share-ace.js"></script>
+
+  <style>
+    #editor {
+      position: absolute;
+      width: 500px;
+      height: 400px;
+      background-color: #303030;
+      color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+  <!-- <textarea id="pad">Connecting...</textarea> -->
+  <div id="editor">
+  </div>
+
+  <script>
+  //########################################################################
+
+  var aceEdit;
+  Range = require("ace/range").Range;
+
+  var ws = new WebSocket('ws://localhost:8005');
+  var sjs = new window.sharejs.Connection(ws);
+  var doc = sjs.get('A', 'B');
+
+  doc.subscribe();
+  doc.whenReady(function () {
+    setTimeout(function () {
+      if (!doc.type) doc.create('text');
+      if (doc.type && doc.type.name === 'text') {
+        aceEdit = ace.edit("editor");
+        doc.attachAce(Range, aceEdit);
+      }
+    });
+  });
+
+  //########################################################################
+  </script>
+</body>
+</html>
