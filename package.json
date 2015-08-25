@@ -1,6 +1,6 @@
 {
-  "name": "share-ace-rethinkdb",
-  "version": "0.1.2",
+  "name": "@tutor/share-ace-rethinkdb",
+  "version": "0.1.3",
   "description": "ACE bindings for ShareJS",
   "main": "share-ace-server.js",
   "scripts": {
