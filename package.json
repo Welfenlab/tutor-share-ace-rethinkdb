@@ -1,8 +1,8 @@
 {
-  "name": "share-ace",
+  "name": "share-ace-rethinkdb",
   "version": "0.1.2",
   "description": "ACE bindings for ShareJS",
-  "main": "share-ace.js",
+  "main": "share-ace-server.js",
   "scripts": {
     "test": "node_modules/.bin/mocha",
     "postinstall": "cd ./node_modules/share && npm install && make"
