@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/share/share-codemirror.git"
+    "url": "https://github.com/Welfenlab/tutor-share-ace-rethinkdb"
   },
   "keywords": [
     "codemirror",
@@ -17,7 +17,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/share/share-codemirror/issues"
+    "url": "https://github.com/Welfenlab/tutor-share-ace-rethinkdb/issues"
   },
   "contributors": [
     "Maximilian Klein <dasmaxl@gmail.com> (https://github.com/LittleHelicase)",
