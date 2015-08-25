@@ -12,8 +12,9 @@
     "url": "https://github.com/Welfenlab/tutor-share-ace-rethinkdb"
   },
   "keywords": [
-    "codemirror",
-    "sharejs"
+    "ace",
+    "sharejs",
+    "rethinkdb"
   ],
   "license": "MIT",
   "bugs": {
