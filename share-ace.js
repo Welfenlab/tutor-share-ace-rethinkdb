@@ -50,7 +50,7 @@
       suppress = true;
       var A = offsetToPos(editor, pos);
       var B = offsetToPos(editor, pos + length);
-      var range = new Range (
+      var range = new Range.Range (
           A.row, A.column, B.row, B.column
       );
       editor.getSession().remove(range);
@@ -85,26 +85,38 @@
       // (or documentation error)
       var editorContent = editor.getValue().split('\n');
 
-      for (var i = 0; i != change.start.row; ++i) {
+      for (var i = 0; i != change.data.range.start.row; ++i) {
         startPos += editorContent[i].length + 1;
       }
-      startPos += change.start.column;
+      startPos += change.data.range.start.column;
 
-      switch (change.action) {
-        case ('insert'): {
-          var insertion = change.lines.join('\n');
+      switch (change.data.action) {
+        case ('insertText'): {
+          var insertion = change.data.text;
 
           ctx.insert(startPos, insertion);
           break;
         }
-        case ('remove'): {
+
+        case ('removeText'): {
+          var delLen = change.data.text.length;
+          ctx.remove(startPos, delLen);
+          break;
+        }
+        case ('removeLines'): {
           var delLen = 0;
-          for (var p = 0; p != change.lines.length; ++p) {
-            delLen += change.lines[p].length + 1;
+          for (var p = 0; p != change.data.lines.length; ++p) {
+            delLen += change.data.lines[p].length + 1;
           }
-          delLen--;
+          //delLen--;
 
           ctx.remove(startPos, delLen);
+          break;
+        }
+        case ('insertLines'): {
+          var insertion = change.data.lines.join('\n');
+          insertion += '\n';
+          ctx.insert(startPos, insertion);
           break;
         }
       }
