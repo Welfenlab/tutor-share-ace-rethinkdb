@@ -1,15 +1,30 @@
 /**
  *  @param app The express app.
- *  @param serverSpine An object containing a config,
- *                     a 'operationAllowed' function taking one argument and
- *                     a 'log' function taking one argument for logging.
+ *  @param config An object containing a config
  */
-module.exports = function(app, serverSpine)
-{
-  var r = require('rethinkdb');
+module.exports =  function(app, config)
+  {
+    var r = require('rethinkdb');
 
-  var shareJSServer = require('./core/sharejs-server')(serverSpine);
-  var socketHandler = require('./core/socket-handler')(serverSpine);
+    var serverSpine = {
+      'config': config,
+      'operationAllowed': function(dat) {
+        // add check here!
+        return {
+          allowed: true,
+          terminateSession: true
+        };
+      },
+      'log': function (obj) {
+        if (config.development)
+          console.log('(share-ace) ' + obj);
+        }
+    };
 
-  shareJSServer.listen(serverSpine.config.ports.sharejs);
+
+    var shareJSServer = require('./core/sharejs-server')(serverSpine);
+    var socketHandler = require('./core/socket-handler')(serverSpine);
+
+    shareJSServer.listen(config.sharejs.port);
+    console.log('sharejs server started on port ' + config.sharejs.port)
 }
