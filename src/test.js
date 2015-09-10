@@ -1,7 +1,7 @@
 
 module.exports = function (Range, a, b, config) {
   var sharejs = require('share/lib/client/index.js');
-  var attach = require('../examples/share-ace.js');
+  var attach = require('../share-ace.js');
 
   function connectDoc(editor){
     var host = window.location.host.toString().split(":");
