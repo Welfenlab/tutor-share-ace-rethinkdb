@@ -4,8 +4,8 @@ module.exports = function (Range, a, b, config) {
   var attach = require('../examples/share-ace.js');
 
   function connectDoc(editor){
-    var host = window.location.host.toString().split(":");
-    var ws = new WebSocket('ws://'+host[0]+':' + config.port);
+    var host = window.location.host.toString();
+    var ws = new WebSocket('ws://'+host+'/ws');
     // besser nur einen ws für alle editoren
 
     ws.onerror = function (e) {
