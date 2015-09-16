@@ -38,15 +38,21 @@ module.exports = function (spine)
 
     // When server receives message from the client
     client.on('message', function (data) {
-      var dat = JSON.parse(data);
-      var check = spine.operationAllowed(dat);
-      console.log('message');
-      if (!check.allowed) {
-        spine.log('unpermitted operation by ' + remoteEndpoint);
-        if (check.terminateSession)
-          return client.close();
+      try {
+        var dat = JSON.parse(data);
+        var check = spine.operationAllowed(dat);
+        console.log('message');
+        if (!check.allowed) {
+          spine.log('unpermitted operation by ' + remoteEndpoint);
+          if (check.terminateSession)
+            return client.close();
+        }
+        return stream.push(dat);
+      } catch (e) {
+        //eg failed to parse the data
+        console.log(e);
+        this.emit('end');
       }
-      return stream.push(dat);
     });
 
     client.on('close', function (reason) {
