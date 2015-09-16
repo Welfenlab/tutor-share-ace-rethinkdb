@@ -9,6 +9,8 @@ module.exports = function (spine)
 
   // Handle socket connections
   var socketConnectionHandler = function (client) {
+    var request = client.upgradeReq;
+    console.log("socketConnectionHandler request session:", request.session);
 
     var stream = new Duplex({
       objectMode: true

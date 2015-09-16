@@ -18,13 +18,14 @@ module.exports =  function(app, config)
       'log': function (obj) {
         if (config.development)
           console.log('(share-ace) ' + obj);
-        }
+        },
+      'path': "/api/ws"
     };
 
 
-    var shareJSServer = require('./core/sharejs-server')(serverSpine);
+    var shareJSServer = require('./core/sharejs-server')(serverSpine, app);
     var socketHandler = require('./core/socket-handler')(serverSpine);
 
-    shareJSServer.listen(config.sharejs.port);
-    console.log('sharejs server started on port ' + config.sharejs.port)
+    //shareJSServer.listen(config.sharejs.port);
+    console.log('sharejs server listens now on ' + serverSpine.path)
 }
