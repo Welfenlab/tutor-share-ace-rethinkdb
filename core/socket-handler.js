@@ -9,25 +9,22 @@ module.exports = function (spine)
 
   // Handle socket connections
   var socketConnectionHandler = function (client) {
-    var request = client.upgradeReq;
-    console.log("socketConnectionHandler request session:", request.session);
-
     var stream = new Duplex({
       objectMode: true
     });
 
     // Send new message to all clients
     stream._write = function (chunk, encoding, callback) {
-      console.log('Stream : write -> ', JSON.stringify(chunk));
+      console.log('Stream : write | UID', client.upgradeReq.session.uid, "sessionID", client.upgradeReq.sessionID, "data" , JSON.stringify(chunk));
       client.send(JSON.stringify(chunk));
       return callback();
     };
 
     stream._read = function () {};
 
-    stream.headers = client.upgradeReq.headers;
-
-    stream.remoteAddress = client.upgradeReq.connection.remoteAddress;
+    var request = client.upgradeReq;
+    stream.headers = request.headers;
+    stream.remoteAddress = request.connection.remoteAddress;
 
     var remoteEndpoint = stream.remoteAddress + ':' + client._socket.remotePort;
 
@@ -40,8 +37,8 @@ module.exports = function (spine)
     client.on('message', function (data) {
       try {
         var dat = JSON.parse(data);
-        var check = spine.operationAllowed(dat);
-        console.log('message');
+        var check = spine.operationAllowed(dat, request);
+        console.log('recieved message');
         if (!check.allowed) {
           spine.log('unpermitted operation by ' + remoteEndpoint);
           if (check.terminateSession)

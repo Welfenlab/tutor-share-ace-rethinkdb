@@ -8,8 +8,13 @@ module.exports =  function(app, config)
 
     var serverSpine = {
       'config': config,
-      'operationAllowed': function(dat) {
+      'operationAllowed': function(data, request) {
         // add check here!
+        if (!request.session && !request.session.uid)
+          return {
+            allowed: false,
+            terminateSession: true
+          };
         return {
           allowed: true,
           terminateSession: true

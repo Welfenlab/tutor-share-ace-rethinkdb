@@ -3,6 +3,9 @@ module.exports = function (Range, a, b, config) {
   var sharejs = require('share/lib/client/index.js');
   var attach = require('../share-ace.js');
 
+  var group = a.split("-").join("");
+  var task  = b.split("-").join("");
+
   function connectDoc(editor){
     var host = window.location.host.toString();
     var ws = new WebSocket('ws://'+host+'/api/ws');
@@ -25,7 +28,7 @@ module.exports = function (Range, a, b, config) {
 
       var sjs = new sharejs.Connection(ws);
 
-      var doc = sjs.get(a, b);
+      var doc = sjs.get(group, task);
 
       doc.subscribe();
       doc.whenReady(function () {
