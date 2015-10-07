@@ -37,6 +37,7 @@
     "connect": "^3.4.0",
     "livedb-rethinkdb": "0.0.5",
     "lodash": "^3.10.1",
+    "moment": "^2.10.3",
     "rethinkdb": "^2.1.0",
     "rethinkdb-init": "0.0.4",
     "socket.io": "^1.3.6",

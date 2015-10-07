@@ -37,19 +37,20 @@ module.exports = function (spine)
     client.on('message', function (data) {
       try {
         var dat = JSON.parse(data);
-        var check = spine.operationAllowed(dat, request);
-        console.log('recieved message');
-        if (!check.allowed) {
-          spine.log('unpermitted operation by ' + remoteEndpoint);
-          if (check.terminateSession)
-            return client.close();
-        }
-        return stream.push(dat);
       } catch (e) {
         //eg failed to parse the data
-        console.log(e);
+        console.log("ws message parse error: ", e);
         this.emit('end');
       }
+
+      spine.operationAllowed(dat, request).then( function(check){
+        console.log('recieved message');
+      }).then(function(){
+        return stream.push(dat);
+      }).catch(function(err){
+        spine.log('unpermitted operation by ' + remoteEndpoint + ' with reason ' + err);
+        return client.close();
+      });
     });
 
     client.on('close', function (reason) {
