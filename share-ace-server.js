@@ -24,7 +24,7 @@ return function(app, config)
       'config': config,
       'operationAllowed': function(data, request) {
         return new Promise(function(fulfill, reject){
-          if (!request.session && !request.session.uid)
+          if (!request.session || !request.session.uid)
             reject("no session");
 
           var uid = request.session.uid;
