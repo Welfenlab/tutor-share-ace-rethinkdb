@@ -1,34 +1,43 @@
-
 module.exports = function (Range, a, b, config) {
   var sharejs = require('share/lib/client/index.js');
   var attach = require('../share-ace.js');
+  var getStatus;
 
   var group = a.split("-").join("");
   var task  = b.split("-").join("");
 
   function connectDoc(editor){
     var host = window.location.host.toString();
-    var ws = new WebSocket('ws://'+host+'/api/ws');
+    var path = 'ws://'+host+'/api/ws';
+    var ws = new WebSocket(path);
+    var sjs, doc, sjsclose;
     // besser nur einen ws für alle editoren
 
     ws.onerror = function (e) {
       console.log("websocket error! for editor " + editor);
     }
 
-    ws.onclose = function(){
-        //try to reconnect in 5 seconds
-        setTimeout(function(){
-          connectDoc(editor)
-          }, 5000);
-        console.log("reconnecting to ws");
-    };
+    var onclose = function (reason) {
+      sjsclose(reason);
+      console.log("reconnecting to ws");
+
+      retryReconnect = function() {
+        var ws = new WebSocket(path);
+        sjs.bindToSocket(ws);
+        ws.onclose = onclose;
+      }
+      setTimeout(retryReconnect, 5000);
+    }
 
     ws.onopen = function () {
       console.log("websocket connected");
 
-      var sjs = new sharejs.Connection(ws);
+      sjs = new sharejs.Connection(ws);
 
-      var doc = sjs.get(group, task);
+      sjsclose = ws.onclose;
+      ws.onclose = onclose;
+
+      doc = sjs.get(group, task);
 
       doc.subscribe();
       doc.whenReady(function () {
@@ -41,7 +50,13 @@ module.exports = function (Range, a, b, config) {
         });
       });
     }
+
+    getStatus = function(){
+        return {state : sjs.state, pending: doc.pendingData.length};
+    };
+
+    return getStatus;
   };
 
-  return {connect : connectDoc};
+  return {connect : connectDoc, status : getStatus};
 }
