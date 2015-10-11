@@ -4,7 +4,7 @@
   "description": "ACE bindings for ShareJS",
   "main": "share-ace-server.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
+    "test": "echo 'no tests'",
     "postinstall": "cd ./node_modules/share && NODE_ENV='' npm install && make"
   },
   "repository": {
