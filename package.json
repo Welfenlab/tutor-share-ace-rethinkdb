@@ -5,7 +5,7 @@
   "main": "share-ace-server.js",
   "scripts": {
     "test": "node_modules/.bin/mocha",
-    "postinstall": "cd ./node_modules/share && npm install && make"
+    "postinstall": "cd ./node_modules/share && NODE_ENV='' npm install && make"
   },
   "repository": {
     "type": "git",
