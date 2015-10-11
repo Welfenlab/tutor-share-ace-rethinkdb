@@ -4,8 +4,7 @@
   "description": "ACE bindings for ShareJS",
   "main": "share-ace-server.js",
   "scripts": {
-    "test": "echo 'no tests'",
-    "postinstall": "cd ./node_modules/share && NODE_ENV='' npm install && make"
+    "test": "echo 'no tests'"
   },
   "repository": {
     "type": "git",
@@ -43,6 +42,6 @@
     "socket.io": "^1.3.6",
     "livedb": "^0.4.9",
     "ws": "^0.7.2",
-    "share": "git+https://github.com/share/ShareJS.git"
+    "share": "0.7.40"
   }
 }
