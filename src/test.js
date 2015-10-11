@@ -9,8 +9,8 @@ module.exports = function (Range, a, b, config) {
   function connectDoc(editor){
     var host = window.location.host.toString();
     var path = 'ws://'+host+'/api/ws';
-    if(process.env.NODE_ENV=="production"){
-      var path = 'wss://'+host+'/api/ws';
+    if(window.location.protocol.indexOf("https") == 0){
+      path = 'wss://'+host+'/api/ws';
     }
     var ws = new WebSocket(path);
     var sjs, doc, sjsclose;
