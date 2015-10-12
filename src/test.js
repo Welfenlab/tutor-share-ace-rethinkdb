@@ -78,5 +78,5 @@ module.exports = function (editor, Range, a, b, config) {
     });
   };
 
-  module.exports = editorConnection;
+  return editorConnection;
 }
