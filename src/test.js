@@ -1,12 +1,14 @@
 module.exports = function (Range, a, b, config) {
   var sharejs = require('share/lib/client/index.js');
   var attach = require('../share-ace.js');
-  var getStatus;
+  var getStatus, disconnectDoc;
+  var isClosing;
 
   var group = a.split("-").join("");
   var task  = b.split("-").join("");
 
-  function connectDoc(editor){
+  var connectDoc = function (editor) {
+    isClosing = false;
     var host = window.location.host.toString();
     var path = 'ws://'+host+'/api/ws';
     if(window.location.protocol.indexOf("https") == 0){
@@ -22,14 +24,17 @@ module.exports = function (Range, a, b, config) {
 
     var onclose = function (reason) {
       sjsclose(reason);
-      console.log("reconnecting to ws");
 
-      retryReconnect = function() {
-        var ws = new WebSocket(path);
+      var retryReconnect = function() {
+        ws = new WebSocket(path);
         sjs.bindToSocket(ws);
         ws.onclose = onclose;
       }
-      setTimeout(retryReconnect, 5000);
+
+      if (!isClosing) {
+        console.log("reconnecting to ws");
+        setTimeout(retryReconnect, 5000);
+      }
     }
 
     ws.onopen = function () {
@@ -54,12 +59,21 @@ module.exports = function (Range, a, b, config) {
       });
     }
 
-    getStatus = function(){
-        return {state : sjs.state, pending: doc.pendingData.length};
+    getStatus = function() {
+      return {state : sjs.state, pending: doc.pendingData.length};
+    };
+
+    disconnectDoc = function() {
+      isClosing = true;
+      ws.close();
     };
 
     return getStatus;
   };
 
-  return {connect : connectDoc, status : getStatus};
+  return {
+    connect: connectDoc,
+    status: getStatus,
+    disconnect: disconnectDoc
+  };
 }
