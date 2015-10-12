@@ -22,7 +22,7 @@ module.exports = function(config){
         partB = Object.getOwnPropertyNames(doc.s[partA])[0];
       } else {
         partA = doc.c;
-        partB = data.d;
+        partB = doc.d;
       }
       var data = partB.split(":");
       return {group:data[0], exercise:data[1], number:data[2]};
