@@ -35,6 +35,7 @@
     "bluebird": "^2.9.34",
     "connect": "^3.4.0",
     "event-emitter": "lemaik/event-emitter",
+    "express-ws": "^0.2.6",
     "livedb": "^0.4.9",
     "livedb-rethinkdb": "0.0.5",
     "lodash": "^3.10.1",

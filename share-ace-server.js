@@ -7,10 +7,10 @@ var moment = require('moment');
 
 function toUUID(input) {
   // ee25 6059 - 9d92 - 4774 - 9db2 - 4563 78e0 4586
-  return input.slice(0,8)   + "-" + 
-         input.slice(8,12)  + "-" + 
-         input.slice(12,16) + "-" + 
-         input.slice(16,20) + "-" + 
+  return input.slice(0,8)   + "-" +
+         input.slice(8,12)  + "-" +
+         input.slice(12,16) + "-" +
+         input.slice(16,20) + "-" +
          input.slice(20,32);
 }
 
@@ -18,28 +18,18 @@ module.exports = function (DB) {
 
 return function(app, config)
   {
-    var r = require('rethinkdb');
-
+    var dconv = require("./src/doc_name_converter")(config);
     var serverSpine = {
       'config': config,
       'operationAllowed': function(data, request) {
         return new Promise(function(fulfill, reject){
-          if (!request.session || !request.session.uid)
-            reject("no session");
-
-          var uid = request.session.uid;
-
-          var group, groupUUID; 
-          if (data.s)
-            group = Object.getOwnPropertyNames(data.s)[0];
-          else
-            group = data.c;
-
-          groupUUID = toUUID(group);
-
-          DB.Groups.getGroupForUser(uid).then( function(groupData) {
-            if (groupData.id != groupUUID)
-              reject("group mismatch");
+          var docData = dconv.doc2Group(data);
+          dconv.session2Group(request.session,DB).then( function(groupData) {
+            if (groupData.id != docData.group){
+              reject("Group '"+groupData.id+"' tried to access document " + JSON.stringify(docData));
+              return;
+            }
+            fulfill();
           })
           /*
           .then( function(){
@@ -57,12 +47,10 @@ return function(app, config)
             if (dueDateReached && data.a != 'bs')
               reject("due date reached");
           })*/
-          .then(function(){
-            fulfill();
-          }).catch(function(error){
-              console.log("operationAllowed: ", error);
-              reject("error");
-            });
+          .catch(function(error){
+            console.log("operationAllowed: ", error);
+            reject("error");
+          });
         });
       },
       'log': function (obj) {
