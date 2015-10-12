@@ -62,7 +62,7 @@ return function(app, config)
 
 
     var shareJSServer = require('./core/sharejs-server')(serverSpine, app);
-    var socketHandler = require('./core/socket-handler')(serverSpine);
+    //var socketHandler = require('./core/socket-handler')(serverSpine);
 
     //shareJSServer.listen(config.sharejs.port);
     console.log('sharejs server listens now on ' + serverSpine.path)
