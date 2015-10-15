@@ -1,6 +1,6 @@
 {
   "name": "@tutor/share-ace-rethinkdb",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "ACE bindings for ShareJS",
   "main": "share-ace-server.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "connect": "^3.4.0",
     "event-emitter": "lemaik/event-emitter",
     "express-ws": "^0.2.6",
-    "livedb": "^0.4.9",
+    "livedb": "^0.5.13",
     "livedb-rethinkdb": "0.0.5",
     "lodash": "^3.10.1",
     "moment": "^2.10.3",
