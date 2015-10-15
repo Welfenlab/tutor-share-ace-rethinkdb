@@ -1,83 +1,83 @@
-(function () {
-  'use strict';
+;(function () {
+  'use strict'
 
-  //var requireImpl = ace.require != null ? ace.require : require;
+  // var requireImpl = ace.require != null ? ace.require : require
 
-  var offsetToPos = function(editor, offset) {
-    var line, lines, row, _i, _len;
+  var offsetToPos = function (editor, offset) {
+    var line, lines, row, _i, _len
 
-    lines = editor.getSession().getDocument().getAllLines();
-    row = 0;
+    lines = editor.getSession().getDocument().getAllLines()
+    row = 0
     for (row = _i = 0, _len = lines.length; _i < _len; row = ++_i) {
-      line = lines[row];
+      line = lines[row]
       if (offset <= line.length) {
-        break;
+        break
       }
-      offset -= lines[row].length + 1;
+      offset -= lines[row].length + 1
     }
     return {
       row: row,
       column: offset
-    };
-  };
+    }
+  }
 
   /**
    * @param editor - Ace instance
    * @param ctx - Share context
    */
-  function shareAce(Range, editor, ctx) {
-    if (!ctx.provides.text) throw new Error('Cannot attach to non-text document');
+  function shareAce (Range, editor, ctx) {
+    if (!ctx.provides.text) throw new Error('Cannot attach to non-text document')
 
-    var suppress = false;
+    var suppress = false
     var text = ctx.get() || ''; // Due to a bug in share - get() returns undefined for empty docs.
-    editor.setValue(text);
-    check();
+    editor.setValue(text)
+    check()
 
     // *** remote -> local changes
 
     ctx.onInsert = function (pos, text) {
-      editor.off('change', onLocalChange);
-      suppress = true;
+      editor.off('change', onLocalChange)
+      suppress = true
 
-      editor.getSession().insert(offsetToPos(editor, pos), text);
-      suppress = false;
-      check();
-      editor.on('change', onLocalChange);
-    };
+      editor.getSession().insert(offsetToPos(editor, pos), text)
+      suppress = false
+      check()
+      editor.on('change', onLocalChange)
+    }
 
     ctx.onRemove = function (pos, length) {
-      editor.off('change', onLocalChange);
-      suppress = true;
-      var A = offsetToPos(editor, pos);
-      var B = offsetToPos(editor, pos + length);
-      var range = new Range.Range (
-          A.row, A.column, B.row, B.column
-      );
-      editor.getSession().remove(range);
-      suppress = false;
-      check();
-      editor.on('change', onLocalChange);
-    };
+      editor.off('change', onLocalChange)
+      suppress = true
+      var A = offsetToPos(editor, pos)
+      var B = offsetToPos(editor, pos + length)
+      var range = new Range.Range(
+        A.row, A.column, B.row, B.column
+      )
+      editor.getSession().remove(range)
+      suppress = false
+      check()
+      editor.on('change', onLocalChange)
+    }
 
     // *** local -> remote changes
 
-    editor.on('change', onLocalChange);
+    editor.on('change', onLocalChange)
 
-    function onLocalChange(change) {
-      if (suppress) return true;
-      applyToShareJS(editor, change);
-      check();
-      return true;
+    function onLocalChange (change) {
+      if (suppress) return true
+      applyToShareJS(editor, change)
+      check()
+      return true
     }
 
     editor.detachShareJsDoc = function () {
-      ctx.onRemove = null;
-      ctx.onInsert = null;
-      editor.off('change', onLocalChange);
+      ctx.onRemove = null
+      ctx.onInsert = null
+      editor.off('change', onLocalChange)
     }
 
     // Convert a Ace change into an op understood by share.js
-    function applyToShareJS(editor, change) {
+    function applyToShareJS (editor, change) {
       var startPos = 0;  // Get character position from # of chars in each line.
       var i = 0;         // i goes through all lines.
 
@@ -85,77 +85,65 @@
       // (or documentation error)
       var editorContent = editor.getValue().split('\n');
 
-      for (var i = 0; i != change.data.range.start.row; ++i) {
+      for (var i = 0; i != change.start.row; ++i) {
         startPos += editorContent[i].length + 1;
       }
-      startPos += change.data.range.start.column;
+      startPos += change.start.column;
 
-      switch (change.data.action) {
-        case ('insertText'): {
-          var insertion = change.data.text;
+      switch (change.action) {
+        case ('insert'): {
+          var insertion = change.lines.join('\n');
 
           ctx.insert(startPos, insertion);
           break;
         }
-
-        case ('removeText'): {
-          var delLen = change.data.text.length;
-          ctx.remove(startPos, delLen);
-          break;
-        }
-        case ('removeLines'): {
+        case ('remove'): {
           var delLen = 0;
-          for (var p = 0; p != change.data.lines.length; ++p) {
-            delLen += change.data.lines[p].length + 1;
+          for (var p = 0; p != change.lines.length; ++p) {
+            delLen += change.lines[p].length + 1;
           }
-          //delLen--;
+          delLen--;
 
           ctx.remove(startPos, delLen);
-          break;
-        }
-        case ('insertLines'): {
-          var insertion = change.data.lines.join('\n');
-          insertion += '\n';
-          ctx.insert(startPos, insertion);
           break;
         }
       }
     }
 
-    function check() {
+    function check () {
       setTimeout(function () {
-        var editorText, otText;
+        var editorText, otText
 
-        editorText = editor.getValue();
-        otText = ctx.get() || '';
+        editorText = editor.getValue()
+        otText = ctx.get() || ''
 
         if (editorText !== otText) {
-          console.error("Text does not match!");
-          console.error("editor: " + editorText);
-          return console.error("ot:     " + otText);
+          console.error('Text does not match!')
+          console.error('editor: ' + editorText)
+          return console.error('ot:     ' + otText)
         }
-      }, 0);
+      }, 0)
     }
 
-    return ctx;
+    return ctx
   }
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     // Node.js
-    module.exports = shareAce;
-    module.exports.scriptsDir = __dirname;
+    module.exports = shareAce
+    module.exports.scriptsDir = __dirname
   } else {
     if (typeof define === 'function' && define.amd) {
       // AMD
       define([], function () {
-        return shareAce;
-      });
+        return shareAce
+      })
     } else {
       // Browser, no AMD
       window.sharejs.Doc.prototype.attachAce = function (Range, editor, ctx) {
-        if (!ctx) ctx = this.createContext();
-        shareAce(Range, editor, ctx);
-      };
+        if (!ctx) ctx = this.createContext()
+        shareAce(Range, editor, ctx)
+      }
     }
   }
-})();
+})()
