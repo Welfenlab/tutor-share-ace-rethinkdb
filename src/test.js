@@ -71,7 +71,7 @@ module.exports = function (editor, Range, group, exercise, number, config) {
     doc.subscribe();
     doc.whenReady(function () {
       setTimeout(function () {
-        if (!doc.type) doc.create('text');
+        if (!doc.type) doc.create('text', config.prefill ? config.prefill : " ");
         if (doc.type && doc.type.name === 'text') {
           //doc.attachAce(Range, editor);
           attach(Range, editor, doc.createContext())
