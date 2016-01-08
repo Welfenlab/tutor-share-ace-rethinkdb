@@ -47,7 +47,7 @@ module.exports = function (DB) {
         })
       },
       'log': function (obj) {
-        if (config.development)
+        if (process.env.NODE_ENV !== "production")
           console.log('(share-ace) ' + obj)
       },
       'path': '/api/ws'
